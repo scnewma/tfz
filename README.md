@@ -9,9 +9,8 @@ This tool uses [fzf](https://github.com/junegunn/fzf) to do fuzzy finding, make 
 `tfz` is built with [deno](https://deno.land/) install it via:
 
 ```
-$ deno install https://raw.githubusercontent.com/scnewma/tfz/main/main.ts
+$ deno install -A https://raw.githubusercontent.com/scnewma/tfz/main/tfz.ts
 ```
-TODO
 
 ## Usage
 
