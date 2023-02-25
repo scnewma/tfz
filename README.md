@@ -6,6 +6,11 @@ Fuzzy filter and open all your TFC workspaces.
 
 This tool uses [fzf](https://github.com/junegunn/fzf) to do fuzzy finding, make sure you have that installed.
 
+`tfz` is built with [deno](https://deno.land/) install it via:
+
+```
+$ deno install https://raw.githubusercontent.com/scnewma/tfz/main/main.ts
+```
 TODO
 
 ## Usage
