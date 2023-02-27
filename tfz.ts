@@ -5,6 +5,7 @@ import { newClient as newTfcClient, Workspace } from "./tfc.ts";
 import { load as loadConfig } from "./config.ts";
 import { ProgressBar } from "./deps.ts";
 import { TfzError } from "./errors.ts";
+import * as alfred from "./alfred.ts";
 
 async function main() {
   const args = parseArgs(Deno.args);
@@ -33,33 +34,64 @@ async function main() {
   }
 
   const names = workspaces.map((w) => w.attributes.name);
-  const chosen = await filter(names);
-  for (const item of chosen) {
-    const url = getWorkspaceURL(config.host, workspaces, item);
-    if (!url) {
-      console.debug(`Could not determine workspace URL for ${item}.`);
-      continue;
+
+  switch (args.mode) {
+    case "open": {
+      const chosen = await filter(names, { interactive: true });
+      for (const item of chosen) {
+        const workspace = workspaces.find((w) => w.attributes.name === item);
+        if (!workspace) {
+          continue;
+        }
+        const url = getWorkspaceURL(workspace, config.host);
+        if (!url) {
+          console.debug(`Could not determine workspace URL for ${item}.`);
+          continue;
+        }
+        await open(url);
+      }
+      break;
     }
-    await open(url);
+    case "alfred": {
+      const chosen = await filter(names, {
+        interactive: false,
+        filter: args.filter || "",
+      });
+      const res: alfred.ScriptFilterResult = { items: [] };
+      for (const item of chosen) {
+        const workspace = workspaces.find((w) => w.attributes.name === item);
+        if (!workspace) {
+          continue;
+        }
+        const url = getWorkspaceURL(workspace, config.host);
+        if (!url) {
+          console.debug(`Could not determine workspace URL for ${item}.`);
+          continue;
+        }
+        const aitem: alfred.Item = {
+          title: workspace.attributes.name,
+          subtitle: url,
+          match: workspace.attributes.name,
+          arg: url,
+          autocomplete: workspace.attributes.name,
+        };
+        res.items.push(aitem);
+      }
+      console.log(JSON.stringify(res));
+    }
   }
 }
 
 function getWorkspaceURL(
+  workspace: Workspace,
   host: string,
-  workspaces: Workspace[],
-  name: string,
 ): string | null {
-  for (const workspace of workspaces) {
-    if (workspace.attributes.name === name) {
-      const link = getWorkspaceLink(workspace, "self-html");
-      if (!link) {
-        return null;
-      }
-      // the links have a leading / already
-      return `https://${host}${link}`;
-    }
+  const link = getWorkspaceLink(workspace, "self-html");
+  if (!link) {
+    return null;
   }
-  return null;
+  // the links have a leading / already
+  return `https://${host}${link}`;
 }
 
 function getWorkspaceLink(
@@ -82,16 +114,16 @@ async function open(url: string) {
 
 function handleError(error: Error): number {
   if (error instanceof TfzError) {
-    console.error(`Error (${error.kind}): ${error.message}`)
-    return 1
+    console.error(`Error (${error.kind}): ${error.message}`);
+    return 1;
   } else {
     // unhandled
-    throw error
+    throw error;
   }
 }
 
 try {
   await main();
 } catch (error) {
-  Deno.exit(handleError(error))
+  Deno.exit(handleError(error));
 }

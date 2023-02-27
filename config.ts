@@ -1,6 +1,6 @@
-import { join } from './deps.ts';
-import * as os from './os.ts'
-import { ErrorKind, TfzError } from './errors.ts'
+import { join } from "./deps.ts";
+import * as os from "./os.ts";
+import { ErrorKind, TfzError } from "./errors.ts";
 
 export interface Config {
   host: string;
@@ -10,43 +10,43 @@ export interface Config {
 
 // this should eventually be loaded from a configuration directory
 export async function load(): Promise<Config> {
-  const file = await readConfigFile()
+  const file = await readConfigFile();
   if (!file.org) {
-    throw new TfzError(ErrorKind.Uninitialized)
+    throw new TfzError(ErrorKind.Uninitialized);
   }
 
   const host = "app.terraform.io";
   const token = await getTfcToken(host);
   if (!token) {
-    throw new TfzError(ErrorKind.NoTfcToken)
+    throw new TfzError(ErrorKind.NoTfcToken);
   }
   return { host, org: file.org, token };
 }
 
 interface ConfigFile {
-  org?: string
+  org?: string;
 }
 
 async function readConfigFile(): Promise<ConfigFile> {
-  const path = configPath()
+  const path = configPath();
   try {
-    const data = await Deno.readTextFile(path)
-    return JSON.parse(data)
+    const data = await Deno.readTextFile(path);
+    return JSON.parse(data);
   } catch (error) {
     if (!(error instanceof Deno.errors.NotFound)) {
-      throw error
+      throw error;
     }
-    return {}
+    return {};
   }
 }
 
 function configPath(): string {
-  let dir = os.configDir()
+  let dir = os.configDir();
   if (!dir) {
-    throw new TfzError(ErrorKind.NoConfigDirectory)
+    throw new TfzError(ErrorKind.NoConfigDirectory);
   }
-  dir = join(dir, 'tfz')
-  return join(dir, 'config.json')
+  dir = join(dir, "tfz");
+  return join(dir, "config.json");
 }
 
 interface CredFile {
@@ -60,7 +60,7 @@ interface HostCreds {
 export async function getTfcToken(host: string): Promise<string | undefined> {
   const home = Deno.env.get("HOME");
   if (!home) {
-    throw new TfzError(ErrorKind.NoHomeDirectory)
+    throw new TfzError(ErrorKind.NoHomeDirectory);
   }
   const credsFile = join(home, ".terraform.d", "credentials.tfrc.json");
   const raw = await Deno.readTextFile(credsFile);

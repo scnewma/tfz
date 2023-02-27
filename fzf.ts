@@ -1,6 +1,21 @@
-export async function filter(items: string[]): Promise<string[]> {
+export interface FilterOptions {
+  interactive: boolean;
+  filter?: string;
+}
+
+export async function filter(
+  items: string[],
+  options: FilterOptions | undefined,
+): Promise<string[]> {
+  const opts = options || { interactive: true };
+  const cmd = ["fzf", "--multi"];
+  if (!opts.interactive) {
+    cmd.push("--filter");
+    cmd.push(opts.filter || "");
+  }
+
   const fzf = Deno.run({
-    cmd: ["fzf", "--multi"],
+    cmd,
     stdout: "piped",
     stdin: "piped",
   });

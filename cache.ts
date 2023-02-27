@@ -1,12 +1,12 @@
 import { Workspace } from "./tfc.ts";
-import { join } from './deps.ts'
-import * as os from './os.ts'
-import { ErrorKind, TfzError } from './errors.ts'
+import { join } from "./deps.ts";
+import * as os from "./os.ts";
+import { ErrorKind, TfzError } from "./errors.ts";
 
 const cacheDir = (() => {
   const d = os.cacheDir();
   if (!d) {
-    throw new TfzError(ErrorKind.NoConfigDirectory)
+    throw new TfzError(ErrorKind.NoConfigDirectory);
   }
   return join(d, "tfz");
 })();
