@@ -14,8 +14,8 @@ export async function filter(
     cmd.push("--filter");
     cmd.push(opts.query || "");
   } else if (opts.query) {
-    cmd.push("--query")
-    cmd.push(opts.query)
+    cmd.push("--query");
+    cmd.push(opts.query);
   }
 
   const fzf = Deno.run({
