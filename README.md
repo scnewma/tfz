@@ -47,3 +47,14 @@ quickly.
 ```
 $ tfz
 ```
+
+If you use alfred, you can integrate `tfz` directly with alfred to allow fuzzy
+searching from outside of the terminal! Create a new workflow with a "Script
+Filter" and put the following in the script. That script filter can then be
+connected to "Open URL" to automatically launch the selected workspace.
+
+```
+# you may need to update this location depending on how you install tfz
+export PATH="$HOME/.deno/bin:$PATH"
+tfz -A $1
+```
