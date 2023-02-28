@@ -1,8 +1,7 @@
 export type Args = {
   sync: boolean;
   mode: "open" | "alfred";
-  // only defined if mode == alfred
-  filter?: string;
+  query?: string;
 };
 
 // TODO: this doesn't prevent users from passing garbage in that doesn't make
@@ -15,7 +14,7 @@ export function parseArgs(args: string[]): Args {
     } else if (arg == "--alfred" || arg == "-A") {
       res.mode = "alfred";
     } else {
-      res.filter = arg;
+      res.query = arg;
     }
   }
   return res;

@@ -48,6 +48,15 @@ quickly.
 $ tfz
 ```
 
+An initial query can be provided as well in case you want to have a shell entry
+that can be repeated many times more easily.
+
+```
+$ tfz my-workspace-prefix-
+```
+
+### Alfred Integration
+
 If you use alfred, you can integrate `tfz` directly with alfred to allow fuzzy
 searching from outside of the terminal! Create a new workflow with a "Script
 Filter" and put the following in the script. That script filter can then be

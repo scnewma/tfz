@@ -37,7 +37,10 @@ async function main() {
 
   switch (args.mode) {
     case "open": {
-      const chosen = await filter(names, { interactive: true });
+      const chosen = await filter(names, {
+        interactive: true,
+        query: args.query,
+      });
       for (const item of chosen) {
         const workspace = workspaces.find((w) => w.attributes.name === item);
         if (!workspace) {
@@ -55,7 +58,7 @@ async function main() {
     case "alfred": {
       const chosen = await filter(names, {
         interactive: false,
-        filter: args.filter || "",
+        query: args.query || "",
       });
       const res: alfred.ScriptFilterResult = { items: [] };
       for (const item of chosen) {

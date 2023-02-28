@@ -1,6 +1,7 @@
 export interface FilterOptions {
   interactive: boolean;
-  filter?: string;
+  // either [--filter=STR] if non interactive or [--query=STR] if interactive
+  query?: string;
 }
 
 export async function filter(
@@ -11,7 +12,10 @@ export async function filter(
   const cmd = ["fzf", "--multi"];
   if (!opts.interactive) {
     cmd.push("--filter");
-    cmd.push(opts.filter || "");
+    cmd.push(opts.query || "");
+  } else if (opts.query) {
+    cmd.push("--query")
+    cmd.push(opts.query)
   }
 
   const fzf = Deno.run({
